@@ -20,5 +20,3 @@
              
            app.MapPost("/", (User user) => Results.Ok($"Olá {user}"));
 
-
-###  SERIALIZAÇÃO JSON
