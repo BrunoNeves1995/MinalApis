@@ -20,3 +20,42 @@
              
            app.MapPost("/", (User user) => Results.Ok($"Olá {user}"));
 
+### CONFIGURANDO O HOMECONTROLLER
+
+  - Essa configuração informa que a nossa API ira retornar apenas JSON
+   
+   
+        [ApiController]
+        public class HomeController : ControllerBase
+        {
+
+        }
+
+   ###### OS METODOS DENTRO DO CONTROLER, SÃO CHAMADOS DE ACTION
+   
+     - O atributo [HttpGet] informa que o nossa metodo é do tipo GET
+     - O atributo [Route("/")] informa o caminho da nossa rota
+     
+   
+        public String Get()
+        {
+            return $"Hello Word";
+        }
+        
+        
+  ### CONFIGURANDO O CONTROLLER NO ASP NET
+  
+   - Adicionando os controllers
+      
+          builder.Services.AddControllers();
+    
+  - Mapeando os controllers
+     
+         app.MapControllers();
+         
+  - Deixa nosso DataContext disponivel como um serviço
+  - Com isso o ASP NET vai gerenciar a criação e destruição desse objeto
+     
+         builder.Services.AddDbContext<DataContext>();
+    
+    
