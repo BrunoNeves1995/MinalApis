@@ -114,9 +114,9 @@
 
    - Devemos criar uma nova classe ResultViewModel onde todo a requição vai ser retornado o nosso ResultViewModel
      
-     - Quando der erro vai ser retornado o nosso nosso ResultViewModel com o erro dentro
-     - quando for BadRequest vai ser retornado o nosso nosso ResultViewModel com a lista erro dentro
-     - Qaundo for sucesso vai ser retornado o nosso nosso ResultViewModel com os dados de sucesso da nossa requisição
+     - Quando der erro vai ser retornado o nosso modelo ResultViewModel com o erro dentro
+     - quando for BadRequest vai ser retornado o nosso modelo ResultViewModel com a lista erro dentro
+     - Qaundo for sucesso vai ser retornado o nosso modelo ResultViewModel com os dados de sucesso da nossa requisição
        
             public class ResultViewModel<T>
             {   
@@ -147,6 +147,16 @@
                 public T? Data { get; private set; }
                 public List<string>? Errors { get; private set; } = new ();
             }
+
+
+### CONFIGURANDO O COMPORTAMENTO DA API
+  
+   - Desabilitndo a validação automatica
+   
+          builder.Services.AddControllers()
+         .ConfigureApiBehaviorOptions(options => {
+             options.SuppressModelStateInvalidFilter = true;
+         });
 
 
 
