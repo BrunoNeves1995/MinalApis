@@ -151,7 +151,7 @@
 
 ### CONFIGURANDO O COMPORTAMENTO DA API
   
-   - Desabilitndo a validação automatica
+   - Desabilitando a validação automatica
    
           builder.Services.AddControllers()
          .ConfigureApiBehaviorOptions(options => {
