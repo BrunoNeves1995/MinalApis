@@ -193,6 +193,9 @@
    
              if(!ModelState.IsValid)
                 return BadRequest();
-                
+
+
+
+### AUTENTICAÇÃO E AUTORIZAÇÃO
                 
    
