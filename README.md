@@ -25,11 +25,18 @@
   - Essa configuração informa que a nossa API ira retornar apenas JSON
    
    
-        [ApiController]
-        public class HomeController : ControllerBase
-        {
-
-        }
+         [ApiController]
+         [Route("")]
+         public class HomeController : ControllerBase
+         {
+             [HttpGet("")]
+             public IActionResult Get()
+             {
+                 return Ok( new {
+                     Status = "Online"
+                 });
+             }
+         }
 
    ###### OS METODOS DENTRO DO CONTROLER, SÃO CHAMADOS DE ACTION
    
