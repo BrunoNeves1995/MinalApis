@@ -151,7 +151,7 @@
 
 ### CONFIGURANDO O COMPORTAMENTO DA API
   
-   - Desabilitando a validação automatica
+   - Desabilitando a validação automatica do ModelState do Asp Net
    
           builder.Services.AddControllers()
          .ConfigureApiBehaviorOptions(options => {
@@ -159,4 +159,10 @@
          });
 
 
-
+   - Com isso, somos obrigado a informa que queremos a validção do ModelState
+   
+             if(!ModelState.IsValid)
+                return BadRequest();
+                
+                
+   
