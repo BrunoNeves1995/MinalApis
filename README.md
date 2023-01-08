@@ -155,7 +155,7 @@
                 public List<string>? Errors { get; private set; } = new ();
             }
             
-     - Padronizando o nosso retorno para o CategoryController
+     #### Padronizando o nosso retorno para o CategoryController
      
        - Quando tipo retornamos for uma lista de categorias
      
@@ -165,7 +165,7 @@
             
              catch (Exception)
              {
-                 return StatusCode(500, new ResultViewModel<List<Category>>(erro: "01XE1 - Falha interna no servidor"));
+                 return StatusCode(500, new new ResultViewModel<Category>(erro: "01XE1 - Falha interna no servidor"));
              }
         
        - Quando tipo retornamos for uma categoria
@@ -175,7 +175,7 @@
        #### Utilizando metodos de extensão
    
        - Quando tipo retornamos for uma lista de objetos, iremos converter [ModelState.Values] que é um ValueEnumerable para string
-         - Criaremos um metodo de extensão, que permite adionar novas funcionaldade dentro das outras classes
+         - Criaremos um metodo de extensão, que permite adicionar novas funcionalidade dentro das outras classes
 
                return BadRequest(new ResultViewModel<Category>(errors: ModelState.GetErrors()));
                  
