@@ -57,5 +57,53 @@
   - Com isso o ASP NET vai gerenciar a criação e destruição desse objeto
      
          builder.Services.AddDbContext<DataContext>();
+         
     
+### VALIDAÇÕES
+  
+  - ModelState verifica se o nosso modelo EditorCategoryViewModel recebido esta valido, baseado nas anotaçoes [Required] que fica dentro do modelo
     
+    - Modelo
+    
+           public class EditorCategoryViewModel
+          {   
+              [Required(ErrorMessage = "Nome é obrigatório")]
+              public string Name { get; set; } = null!;
+
+              [Required(ErrorMessage = "Slug é obrigatório")]
+              public string Slug { get; set; } = null!;
+          }
+          
+    - Codigo
+
+            [HttpPost("v1/categories")]
+            public async Task<IActionResult> PostAsync(
+                [FromServices] DataContext context,
+                [FromBody] EditorCategoryViewModel model
+            )
+            {   
+                if(!ModelState.IsValid)
+                    return BadRequest();
+
+                try
+                {   
+                    var category = new Category{
+                        Id = 0,
+                        Name = model.Name.Replace("-", ""),
+                        Slug = model.Slug.ToLower(),
+                    };
+
+                    await context.Categories!.AddAsync(category);
+                    await context.SaveChangesAsync();
+
+                    return Created($"v1/categories/{category.Id}", category);
+                }
+                catch (DbUpdateException)
+                {
+                    return StatusCode(500, "01XE3 - Não foi possivel incluir uma nova categoria");
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500, "01XE4 - Falha interna no servidor");
+                }
+            }    
