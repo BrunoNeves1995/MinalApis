@@ -106,4 +106,45 @@
                 {
                     return StatusCode(500, "01XE4 - Falha interna no servidor");
                 }
-            }    
+            }
+
+
+
+### PADRONIZANDO OS RETORNO DA NOSSA API
+
+   - Devemos criar uma nova classe ResultViewModel onde todo a requição vai ser retornado o nosso ResultViewModel
+     
+     - Quando der erro vai ser retornado o nosso nosso ResultViewModel com o erro dentro
+     - quando for BadRequest vai ser retornado o nosso nosso ResultViewModel com a lista erro dentro
+     - Qaundo for sucesso vai ser retornado o nosso nosso ResultViewModel com os dados de sucesso da nossa requisição
+       
+            public class ResultViewModel<T>
+            {   
+                // sucesso e erros
+                public ResultViewModel(T data, List<string> errors){
+                    Data = data;
+                    Errors = errors;
+                }
+
+                // sucesso
+                public ResultViewModel(T data)
+                {
+                    Data = data;
+                }
+
+                // lista error
+                public ResultViewModel(List<string> errors)
+                {
+                    Errors = errors;
+                }
+
+                // quando tenho somee um erro, adiciono o erro na lista de erros
+                public ResultViewModel(string erro)
+                {
+                    Errors.Add(erro);
+                }
+
+                public T? Data { get; private set; }
+                public List<string>? Errors { get; private set; } = new ();
+            }
+
