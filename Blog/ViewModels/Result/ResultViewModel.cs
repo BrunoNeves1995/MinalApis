@@ -20,7 +20,7 @@ namespace Blog.ViewModels.Result
             Errors = errors;
         }
 
-        // quando tenho somee um erro, adiciono o erro na lista de erros
+        // quando tenho somente um erro, adiciono o erro na lista de erros
         public ResultViewModel(string erro)
         {
             Errors.Add(erro);
