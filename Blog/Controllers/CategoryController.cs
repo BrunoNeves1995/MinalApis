@@ -1,4 +1,3 @@
-using System.Reflection;
 using Blog.Externsions;
 using Blog.ViewModels;
 using Blog.ViewModels.Result;
@@ -22,7 +21,7 @@ namespace Blog.Controllers
                 var categories = await context.Categories!.ToListAsync();
 
                 if (categories.Count is 0 || categories is null)
-                    return NotFound("Não existe categorias cadastradas");
+                    return NotFound(new ResultViewModel<Category>(erro: "Não existe categorias cadastradas"));
 
                 return Ok(new ResultViewModel<List<Category>>(data: categories));
             }
