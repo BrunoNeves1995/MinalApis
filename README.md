@@ -234,7 +234,7 @@
 
    ##### Criando uma dependencia  para o controllerLogin e informando que ele depende de um serviço
    
-   - Criamos um construtor dentra do controller
+   - Criamos um construtor dentra do controllerLogin
       
                public class AccountController : ControllerBase
               {   
@@ -253,7 +253,62 @@
                   return Ok(token);
               }
           }
+
+
+   #### Resolvendo a dependencia [FromServices]
+   
+   - Tempo de vida dos serviços
+
+   - Sempre cria uma instancia instancia por requisição
     
-   
-   
-   
+           builder.Services.AddScoped<TokenService>();
+          
+   - Sempre cria uma instancia nova instancia
+    
+          builder.Services.AddTransient();
+          
+   - Cria uma instancia nova instancia por aplicação
+    
+          builder.Services.AddSingleton();
+ 
+   ##### Configurando a aplicação para utilizar autenticação e autorização
+    
+      void MapeandoOController(WebApplication app)
+      {
+          
+          app.UseAuthentication();
+          app.UseAuthorization();
+          app.MapControllers();
+      }
+      
+  ##### Configurando a desencriptação do token
+  
+  - Informamos o schama e o desafio de autenticação      
+  - Informamos como vai ser desencriptado o token
+
+        var chave = Encoding.ASCII.GetBytes(Configuration.JwtKey);
+        
+        builder.Services.AddAuthentication(x => 
+        {
+            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(x => 
+        {
+            x.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(chave),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+        });
+
+
+   - Asegurando o acesso a qualquer aplicação ou metodo, usamos o [Autorize]
+        
+         [Authorize]
+        [ApiController]
+        public class AccountController : ControllerBase
+        {
+          aqui fica os metodos do Accountcontroller
+        }
