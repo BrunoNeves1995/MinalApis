@@ -304,11 +304,15 @@
         });
 
 
-   - Asegurando o acesso a qualquer aplicação ou metodo, usamos o [Autorize]
+   -   [Autorize] asseguramos o acesso a qualquer aplicação ou metodo, o usuario tenha que eter o token de acesso
+   -  [AllowAnonymous] com essa configuração em cima do metodo login, estamos informando que nao precisamos estar autenticado para executar esse medodo na aplicação
+   
         
-         [Authorize]
-        [ApiController]
-        public class AccountController : ControllerBase
-        {
-          aqui fica os metodos do Accountcontroller
-        }
+          [Authorize]
+          [ApiController]
+          public class AccountController : ControllerBase
+          { 
+
+           [AllowAnonymous]
+           aqui fica os metodos do Accountcontroller
+          }
