@@ -197,5 +197,63 @@
 
 
 ### AUTENTICAÇÃO E AUTORIZAÇÃO
-                
+   
+   - Precisamos de uma chave para ser usada na criptografia e descriptografia
+   - Iremos gerar um token baseado no usuario
+   
+   ##### Classe que vai gerar um token
+   
+        public class TokenService
+    {
+        // usuario tem o perfil dentro dele 
+        public string GeradorDeToken(User user)
+        {
+
+            JwtSecurityTokenHandler ManipuladorDeToken = new();
+
+            // convertendo a chave para um  byte[]
+            var chave = Encoding.ASCII.GetBytes(Configuration.JwtKey);
+
+            // configurações dos token, contem todas as informações
+            var ConfiguracaoToken = new SecurityTokenDescriptor
+            {
+                Expires = DateTime.UtcNow.AddHours(8),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(chave),
+                    SecurityAlgorithms.Aes256CbcHmacSha512
+                )
+            };
+
+            // criando o token
+            var token = ManipuladorDeToken.CreateToken(ConfiguracaoToken);
+
+            return ManipuladorDeToken.WriteToken(token);
+        }
+    }
+
+
+   ##### Criando uma dependencia  para o controllerLogin e informando que ele depende de um serviço
+   
+   - Criamos um construtor dentra do controller
+      
+               public class AccountController : ControllerBase
+              {   
+                   private readonly TokenService _tokenService;
+                   public AccountController(TokenService tokenService)
+                  {
+                     _tokenService = tokenService;
+                  }
+
+                OU RECENDO DENTRO DO METODO
+
+              [HttpPost("v1/login")]
+              public IActionResult Login([FromServices] TokenService tokenService)
+              {
+                  var token = tokenService.GeradorDeToken(user: null!);
+                  return Ok(token);
+              }
+          }
+    
+   
+   
    
