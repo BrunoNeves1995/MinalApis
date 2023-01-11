@@ -304,15 +304,49 @@
         });
 
 
-   -   [Autorize] asseguramos o acesso a qualquer aplicação ou metodo, o usuario tenha que eter o token de acesso
-   -  [AllowAnonymous] com essa configuração em cima do metodo login, estamos informando que nao precisamos estar autenticado para executar esse medodo na aplicação
-   
+   -  [Autorize] asseguramos o acesso a qualquer aplicação ou metodo, o usuario tenha que ter o token de acesso
+   -  [AllowAnonymous] com essa configuração em cima do metodo login, estamos informando que nao precisamos estar autenticado
+   -  [Authorize(Roles = "user")] asseguramos que o usuario precisar estar autenticado e que apenas usuario com perfil == "user" conseguem acessar esse metodo
         
-          [Authorize]
-          [ApiController]
-          public class AccountController : ControllerBase
-          { 
+           [ApiController]
+           public class AccountController : ControllerBase
+           {
+               // private readonly TokenService _tokenService;
+               // public AccountController(TokenService tokenService)
+               // {
+               //     _tokenService = tokenService;
+               // }
 
-           [AllowAnonymous]
-           aqui fica os metodos do Accountcontroller
-          }
+               [AllowAnonymous]
+               [HttpPost("v1/login")]
+               public IActionResult Login([FromServices] TokenService tokenService)
+               {
+                   try
+                   {
+                       var token = tokenService.GeradorDeToken(user: null!);
+                       return Ok(new ResultViewModel<String>(data: token));
+                   }
+                   catch (Exception)
+                   {
+
+                      return StatusCode(500, new ResultViewModel<string>(erro: "01XE8 - Falha interna no servidor"));
+                   }
+               }
+
+               [Authorize(Roles = "user")]
+               [HttpGet("v1/user")]
+               public IActionResult GetUser() => Ok(new ResultViewModel<string>(data: User.Identity?.Name ?? ""));
+
+   #### Gerando uma Senha Forte
+   - Gerando a senha
+   
+         var senha = PasswordGenerator.Generate(32);
+         user.PasswordHash = PasswordHasher.Hash(password: senha);
+        
+  - Comparando a senha que foi gerada com a senha que o usuario passou
+    - devemos comparar o rash das duas senhas
+   
+          if(!PasswordHasher.Verify(user.PasswordHash!, model.Password))
+              return StatusCode(401, new ResultViewModel<string>(erro: "Usuarios ou senha inválidos")); 
+       
+       
