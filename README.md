@@ -349,4 +349,53 @@
           if(!PasswordHasher.Verify(user.PasswordHash!, model.Password))
               return StatusCode(401, new ResultViewModel<string>(erro: "Usuarios ou senha inválidos")); 
        
+
+   ### Implementando ApiKey feita para robo
+   - Criando atributo Customizados
        
+         [AttributeUsage(validOn: AttributeTargets.Class | AttributeTargets.Module)]
+         public class ApiKeyAtribute : Attribute, IAsyncActionFilter
+         {
+             // verifica se existe a chave de acesso na requisição 
+             public async Task OnActionExecutionAsync(
+                 ActionExecutingContext context, 
+                 ActionExecutionDelegate next
+                 )
+             {   
+                 // tentando obter um valor da nossa QueryString
+                if(!context.HttpContext.Request.Query.TryGetValue(Configuration.ApiKeyName, out var extraidoChaveApi))
+                {
+                     context.Result = new ContentResult()
+                     {
+                         StatusCode = 401,
+                         Content = "Api não encontrada"
+                     };
+                     return;
+                }
+
+                 //  se a chave nao for igual
+                if(!Configuration.ApiKey.Equals(extraidoChaveApi))
+                {
+                     context.Result = new ContentResult()
+                     {
+                         StatusCode = 403,
+                         Content = "Acesso não autorizado"
+                     };
+                     return;
+                }
+
+                await next();
+             }
+
+  - Usando o Atributo [ApiKeyAtribute]
+    
+        [HttpGet("")]
+        [ApiKeyAtribute]
+        public IActionResult Get()
+        {   
+            return Ok( new {
+                Status = "Online"
+            });
+        }
+        
+        
