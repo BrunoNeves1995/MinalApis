@@ -462,4 +462,47 @@
          FROM [Post] AS [p]
 
 
+   - Consulta com Inner Join
     
+         var posts = await context
+                        .Posts!
+                        .AsNoTracking()
+                        .Include(x => x.Category)
+                        .Include(x => x.User)
+                        .Select(x => 
+                        new ListPotsViewModel
+                        {
+                            Id = x.Id,
+                            Title = x.Title,
+                            Slug = x.Slug,
+                            LastUpdateDate = x.LastUpdateDate,
+                            Category = x.Category!.Name,
+                            User = $"{x.User!.Name} ({x.User.Email})"
+                        }
+                        )
+                        .ToListAsync();
+        
+         SELECT p.Id, p.Title, p.Slug, p.LastUpdateDate, c.Name, u.Name, u.Email
+               FROM Post AS p
+               INNER JOIN Category AS c ON p.CategoryId == c.Id
+               INNER JOIN User AS u ON p.UserId == u.Id),
+             
+
+   ### ALTERANDO O TIPO DE JSON DO ASP NET
+    
+   - Com esa opção em cima do atributo [JsonIgnore] o atributo é ignorado na hora de renderizar
+          
+         [JsonIgnore]
+         public string? PasswordHash { get; set; } = null!;
+   
+   - Configurando o Json para ignorar Circulos subsequentes dessa forma os nossos objetos serão serealizado
+
+         .AddJsonOptions(x => 
+         {
+             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+             
+   - Na serialização quando estiver um objeto nulo, vai ser ignorado   
+   
+          x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+         }); 
+        
