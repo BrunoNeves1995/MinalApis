@@ -506,3 +506,35 @@
           x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
          }); 
         
+
+   ### PAGINAÇÃO DE DADOS
+   
+        [HttpGet("v1/posts")]
+        public async Task<IActionResult> GetAsync(
+            [FromServices] DataContext context,
+            [FromQuery] int page = 0,
+            [FromQuery] int pageZize = 25
+        )
+        {  
+                var posts = await context
+                    .Posts!
+                    .AsNoTracking()
+                    .Include(x => x.Category)
+                    .Include(x => x.User)
+                    // .Select(x => 
+                    // new ListPotsViewModel
+                    // {
+                    //     Id = x.Id,
+                    //     Title = x.Title,
+                    //     Slug = x.Slug,
+                    //     LastUpdateDate = x.LastUpdateDate,
+                    //     Category = x.Category!.Name,
+                    //     User = $"{x.User!.Name} ({x.User.Email})"
+                    // }
+                    // )
+                    .Skip(page * pageZize)
+                    .Take(pageZize)
+                    .ToListAsync();
+
+                return Ok(posts);
+  
