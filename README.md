@@ -440,3 +440,26 @@
               }
           }
       }
+      
+
+   ### PERFORMACE
+   
+   - Trazendo apenas lagumas coluna na consulta 
+       
+         var posts = await context
+                      .Posts!
+                      .AsNoTracking()
+                      .Select(x => 
+                      new {
+                          x.Id,
+                          x.Title, 
+                      }
+                      )
+                      .ToListAsync();
+        
+        
+         SELECT [p].[Id], [p].[Title]
+         FROM [Post] AS [p]
+
+
+    
