@@ -1,10 +1,12 @@
+using Blog.Data;
 using Blog.Externsions;
 using Blog.ViewModels;
+using Blog.ViewModels.Categories;
 using Blog.ViewModels.Result;
-using introducao.Data;
 using introducao.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Blog.Controllers
 {
@@ -12,15 +14,20 @@ namespace Blog.Controllers
     public class CategoryController : ControllerBase
     {
         [HttpGet("v1/categories")]
-        public async Task<IActionResult> GetAsync(
-            [FromServices] DataContext context
+        public  IActionResult GetAsync(
+            [FromServices] DataContext context,
+            [FromServices] IMemoryCache cache
         )
         {
             try
             {
-                var categories = await context.Categories!.ToListAsync();
+                var categories = cache.GetOrCreate(key:"CategoriesCache", factory: x => 
+                {
+                    x.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                    return  GetCategories(context);
+                });
 
-                if (categories.Count is 0 || categories is null)
+                if (categories?.Count is 0 || categories is null)
                     return NotFound(new ResultViewModel<Category>(erro: "Não existe categorias cadastradas"));
 
                 return Ok(new ResultViewModel<List<Category>>(data: categories));
@@ -29,6 +36,11 @@ namespace Blog.Controllers
             {
                 return StatusCode(500, new ResultViewModel<Category>(erro: "01XE1 - Falha interna no servidor"));
             }
+        }
+
+        private List<Category> GetCategories(DataContext context)
+        {
+            return  context.Categories!.ToList();
         }
 
         [HttpGet("v1/categories/{id:int}")]
@@ -58,13 +70,14 @@ namespace Blog.Controllers
             [FromServices] DataContext context,
             [FromBody] EditorCategoryViewModel model
         )
-        {   
-            if(!ModelState.IsValid)
+        {
+            if (!ModelState.IsValid)
                 return BadRequest(new ResultViewModel<Category>(errors: ModelState.GetErrors()));
 
             try
-            {   
-                var category = new Category{
+            {
+                var category = new Category
+                {
                     Id = 0,
                     Name = model.Name.Replace("-", ""),
                     Slug = model.Slug.ToLower(),
@@ -73,17 +86,16 @@ namespace Blog.Controllers
                 await context.Categories!.AddAsync(category);
                 await context.SaveChangesAsync();
 
-                return Created($"v1/categories/{category.Id}",new ResultViewModel<Category>(data: category));
+                return Created($"v1/categories/{category.Id}", new ResultViewModel<Category>(data: category));
             }
             catch (DbUpdateException)
             {
                 return StatusCode(500, new ResultViewModel<Category>(erro: "01XE3 - Não foi possivel incluir uma nova categoria"));
             }
-            catch (Exception)
-            {
-                return StatusCode(500, new ResultViewModel<Category>(erro:"01XE4 - Falha interna no servidor"));
-            }
+
         }
+
+
 
         [HttpPut("v1/categories/{id:int}")]
         public async Task<IActionResult> PutAsync(
@@ -116,6 +128,8 @@ namespace Blog.Controllers
                 return StatusCode(500, "01XE6 - Falha interna no servidor");
             }
         }
+
+
 
         [HttpDelete("v1/categories/{id:int}")]
         public async Task<IActionResult> DeleteAsync(

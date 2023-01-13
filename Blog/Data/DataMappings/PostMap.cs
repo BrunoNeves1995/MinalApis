@@ -36,6 +36,15 @@ namespace Relacionamento.Data.DataMappings
                 .HasDefaultValueSql("GETDATE()");
             // .HasDefaultValue(DateTime.Now.ToUniversalTime());
 
+         
+            // builder.Property(x => x.CreateDate)
+            //     .IsRequired()
+            //     .HasColumnName("CreateDate")
+            //     .HasColumnType("SMALLDATETIME")
+            //     .HasMaxLength(60)
+            //     .HasDefaultValueSql("GETDATE()");
+
+
             // Relacionamentos 1 PARA N
             builder
                .HasOne(post => post.Category)
@@ -51,25 +60,28 @@ namespace Relacionamento.Data.DataMappings
                 .OnDelete(DeleteBehavior.Cascade);
 
 
-            // Relacionamentos N PARA N
+            // Relacionamentos N PARA N tv = tabelaVirtual
             builder
                 .HasMany(post => post.Tags)
                 .WithMany(tag => tag.Posts)
                 .UsingEntity<Dictionary<string, object>>(
                     "PostTag",
-                    post => post
+                    t => t
                         .HasOne<Tag>()
                         .WithMany()
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_PostRole_PostId")
                         .OnDelete(DeleteBehavior.Cascade),
-                    tag => tag
+                    t => t
                         .HasOne<Post>()
                         .WithMany()
                         .HasForeignKey("TagId")
                         .HasConstraintName("FK_PostTag_TagId")
                         .OnDelete(DeleteBehavior.Cascade));
+                    
 
+ 
+                
             // Índices
             builder
                 .HasIndex(x => x.Slug, "IX_Post_Slug")

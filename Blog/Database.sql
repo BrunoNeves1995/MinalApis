@@ -43,7 +43,6 @@ CREATE TABLE [User] (
     [Image] nvarchar(max) NULL,
     [Slug] VARCHAR(80) NOT NULL,
     [Bio] nvarchar(max) NULL,
-    [github] nvarchar(max) NULL,
     CONSTRAINT [PK_User] PRIMARY KEY ([Id])
 );
 GO
@@ -104,7 +103,7 @@ CREATE INDEX [IX_UserRole_UserId] ON [UserRole] ([UserId]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230107134609_CreatedDatabase', N'7.0.1');
+VALUES (N'20230109231346_CreateDatabse', N'7.0.1');
 GO
 
 COMMIT;

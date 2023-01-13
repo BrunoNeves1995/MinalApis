@@ -30,7 +30,7 @@ namespace Relacionamento.Data.DataMappings
             builder.Property(x => x.Email);
             builder.Property(x => x.Image);
             builder.Property(x => x.PasswordHash);
-            builder.Property(x => x.github);
+            // builder.Property(x => x.github);
 
             builder.Property(x => x.Slug)
                 .IsRequired()
