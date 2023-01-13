@@ -548,16 +548,77 @@
    - Metodo para exemplo didatico
     - serviço que recebemos [FromServices] IMemoryCache cache para configurar 
        
-           var categories = cache.GetOrCreate(key:"CategoriesCache", factory: x => 
-           {
-                  x.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
-                  return  GetCategories(context);
-          });
+               [HttpGet("v1/categories")]
+               public async Task<IActionResult> GetAsync(
+                   [FromServices] DataContext context,
+                   [FromServices] IMemoryCache cache
+               )
+               {
+                   try
+                   {
+                       var categories = cache.GetOrCreate(key:"CategoriesCache", factory: x => 
+                       {
+                           x.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                           return  GetCategories(context);
+                       });
+
+                       if (categories?.Count is 0 || categories is null)
+                           return NotFound(new ResultViewModel<Category>(erro: "Não existe categorias cadastradas"));
+
+                       return Ok(new ResultViewModel<List<Category>>(data: categories));
+                   }
+                   catch (Exception)
+                   {
+                       return StatusCode(500, new ResultViewModel<Category>(erro: "01XE1 - Falha interna no servidor"));
+                   }
+               }
 
           private List<Category> GetCategories(DataContext context)
           {
              return context.Categories!.ToList();
           }
 
+
+   ### COMPRESSÃO DE RESPOSTA
+   
+   - Configurando o Asp Net
+    
+         builder.Services.AddResponseCompression(x => 
+         {
+             x.Providers.Add<GzipCompressionProvider>();
+         });
+
+         builder.Services.Configure<GzipCompressionProviderOptions>( x =>
+         {
+             x.Level = CompressionLevel.Optimal;
+         });
+         
+   - Usando o serviço de compressão
+      
+         app.UseResponseCompression();
+
+
+
+   ### DOCUMENTAÇÃO E AMBIENTE
+   
+   - Modo Relese
+       
+         dotnet build -c Release
+         
+         if(app.Environment.IsDevelopment())
+         {
+             Console.BackgroundColor = ConsoleColor.DarkRed;
+             Console.WriteLine("Projeto rodando em ambiente de desenvolvimento");
+             Console.ResetColor();
+         }
+         
+
+   ### FORÇANDO HTTPS
+   
+   - permite que a gente faça redirecionar do http -> https
+  
+         app.UseHttpsRedirection();
+       
+    
        
          
