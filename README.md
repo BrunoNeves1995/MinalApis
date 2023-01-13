@@ -538,3 +538,26 @@
 
                 return Ok(posts);
   
+
+   ### CAHCHE 
+   
+   - Configurando o Asp net
+     
+         builder.Services.AddMemoryCache();
+   
+   - Metodo para exemplo didatico
+    - serviço que recebemos [FromServices] IMemoryCache cache para configurar 
+       
+           var categories = cache.GetOrCreate(key:"CategoriesCache", factory: x => 
+           {
+                  x.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                  return  GetCategories(context);
+          });
+
+          private List<Category> GetCategories(DataContext context)
+          {
+             return context.Categories!.ToList();
+          }
+
+       
+         
