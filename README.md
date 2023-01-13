@@ -619,6 +619,20 @@
   
          app.UseHttpsRedirection();
        
+
+   ### SWAGGER 
+   
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
     
+    if(app.Environment.IsDevelopment())
+        {
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("Projeto rodando em ambiente de desenvolvimento");
+            Console.ResetColor();
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
        
          
